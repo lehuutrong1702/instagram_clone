@@ -1,20 +1,42 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:instagram_clone/services/user_service.dart';
 import 'package:instagram_clone/utils/colors.dart';
+import 'package:instagram_clone/utils/utils.dart';
 import 'package:instagram_clone/widgets/text_field_input.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  bool _isLoading = false;
+
+  void _login() async {
+      setState(() {
+        _isLoading = true;
+      });
+      final service = ref.watch(userServiceProvider);
+      String res = await service.signIn(_emailController.text, _passwordController.text) ;
+      if(res =='success') {
+    showSnackBar(res, context);
+      } else {
+        showSnackBar(res, context);
+      }
+
+      setState(() {
+        _isLoading = false;
+      });
+  }
 
   @override
   void dispose() {
@@ -62,8 +84,8 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 24),
               InkWell(
                 // splashColor: Colors.red,
-                onTap: () {},
-                child: Container(
+                onTap: _login,
+                child: _isLoading ? const CircularProgressIndicator() :Container(
                   width: double.infinity,
                   alignment: Alignment.center,
                   padding: const EdgeInsets.symmetric(vertical: 12),

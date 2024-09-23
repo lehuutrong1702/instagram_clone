@@ -11,10 +11,15 @@ final firebaseAuthRepositoryProvider = Provider((ref) {
 class FirebaseAuthRepository implements AuthRepository {
   @override
   Future<UserCredential> signUpWithEmailPassword(
-      String email, String password)  {
-
-    return  _firebase.createUserWithEmailAndPassword(
+      String email, String password) {
+    return _firebase.createUserWithEmailAndPassword(
         email: email, password: password);
   }
-  
+
+  @override
+  Future<UserCredential> signInWithEmailPassword(
+      String email, String password) {
+    return _firebase.signInWithEmailAndPassword(
+        email: email, password: password);
+  }
 }

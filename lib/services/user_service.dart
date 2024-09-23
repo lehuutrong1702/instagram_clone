@@ -1,6 +1,5 @@
 import 'dart:io';
 
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:instagram_clone/models/user.dart';
@@ -17,7 +16,6 @@ final userServiceProvider = Provider((ref) {
       authRepository: authRepository,
       firebaseStorageRepository: firebaseStorageRepository,
       ref: ref);
-      
 });
 
 class UserService {
@@ -30,13 +28,8 @@ class UserService {
       required this.firebaseStorageRepository,
       required this.ref});
 
-  Future<String> createUser(String username, String email, String password, String bio,
-      File image) async {
-
-
-        print("create user ");
-
-
+  Future<String> createUser(String username, String email, String password,
+      String bio, File image) async {
     try {
       UserCredential userCredential =
           await authRepository.signUpWithEmailPassword(email, password);
@@ -57,5 +50,23 @@ class UserService {
     } catch (error) {
       return error.toString();
     }
+  }
+
+  Future<String> signIn(String email, String password) async {
+    String res = 'Something error';
+
+    try {
+      if (email.isNotEmpty && password.isNotEmpty) {
+       UserCredential userCredential = await authRepository.signInWithEmailPassword(email, password);
+      //  userCredential.
+        res = 'success';
+      } else {
+        res = 'please enter all the fields';
+      }
+    } catch (error) {
+      res = error.toString();
+    }
+
+    return res;
   }
 }
