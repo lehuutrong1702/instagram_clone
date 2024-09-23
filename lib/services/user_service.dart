@@ -5,26 +5,38 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:instagram_clone/models/user.dart';
 import 'package:instagram_clone/repositories/auth_repository.dart';
 import 'package:instagram_clone/repositories/implementations/firebase_auth_repository.dart';
+import 'package:instagram_clone/repositories/implementations/firebase_user_repository.dart';
 import 'package:instagram_clone/repositories/implementations/storage_repository.dart';
+
+final currentUserProvider = FutureProvider((ref) {
+  final firebaseUserRepository = ref.watch(firebaseUserRepositoryProvider);
+  return firebaseUserRepository.getUser();
+});
 
 final userServiceProvider = Provider((ref) {
   final authRepository = ref.watch(firebaseAuthRepositoryProvider);
+
   final firebaseStorageRepository =
       ref.watch(firebaseStorageRepositoryProvider);
 
+  final firebaseUserRepository = ref.watch(firebaseUserRepositoryProvider);
+
   return UserService(
+      firebaseUserRepository: firebaseUserRepository,
       authRepository: authRepository,
       firebaseStorageRepository: firebaseStorageRepository,
       ref: ref);
 });
 
 class UserService {
+  final FirebaseUserRepository firebaseUserRepository;
   final AuthRepository authRepository;
   final FirebaseStorageRepository firebaseStorageRepository;
   final ProviderRef ref;
 
   UserService(
       {required this.authRepository,
+      required this.firebaseUserRepository,
       required this.firebaseStorageRepository,
       required this.ref});
 
@@ -57,8 +69,9 @@ class UserService {
 
     try {
       if (email.isNotEmpty && password.isNotEmpty) {
-       UserCredential userCredential = await authRepository.signInWithEmailPassword(email, password);
-      //  userCredential.
+        UserCredential userCredential =
+            await authRepository.signInWithEmailPassword(email, password);
+        //  userCredential.
         res = 'success';
       } else {
         res = 'please enter all the fields';
