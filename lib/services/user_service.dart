@@ -8,7 +8,7 @@ import 'package:instagram_clone/repositories/implementations/firebase_auth_repos
 import 'package:instagram_clone/repositories/implementations/firebase_user_repository.dart';
 import 'package:instagram_clone/repositories/implementations/storage_repository.dart';
 
-final currentUserProvider = FutureProvider((ref) {
+final currentUserProvider = FutureProvider<InstagramUser>((ref) {
   final firebaseUserRepository = ref.watch(firebaseUserRepositoryProvider);
   return firebaseUserRepository.getUser();
 });
@@ -58,6 +58,7 @@ class UserService {
           follower: []);
 
       firebaseStorageRepository.saveUser(user);
+      ref.refresh(currentUserProvider);
       return 'success';
     } catch (error) {
       return error.toString();
@@ -73,6 +74,7 @@ class UserService {
             await authRepository.signInWithEmailPassword(email, password);
         //  userCredential.
         res = 'success';
+        ref.refresh(currentUserProvider);
       } else {
         res = 'please enter all the fields';
       }

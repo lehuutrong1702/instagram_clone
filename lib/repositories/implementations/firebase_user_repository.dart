@@ -13,9 +13,18 @@ class FirebaseUserRepository implements UserRepository {
 
   @override
   Future<InstagramUser> getUser() async {
+    print("get user");
+    if (_auth.currentUser == null) {
+      print("current user is null");
+      return Future.error('no user found');
+    }
+
     User currentUser = _auth.currentUser!;
     DocumentSnapshot snap =
         await _firestore.collection('user').doc(currentUser.uid).get();
+
+    await Future.delayed(const Duration(milliseconds: 2000));
+
     return InstagramUser.fromJson(snap.data() as Map<String, dynamic>);
   }
 }
