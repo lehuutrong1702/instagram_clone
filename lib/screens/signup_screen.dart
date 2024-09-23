@@ -1,11 +1,14 @@
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:instagram_clone/reponsive/mobile_screen_layout.dart';
+import 'package:instagram_clone/reponsive/reponsive_layout_screen.dart';
+import 'package:instagram_clone/reponsive/web_screen_layout.dart';
+import 'package:instagram_clone/screens/login_screen.dart';
 import 'package:instagram_clone/services/user_service.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/utils/utils.dart';
@@ -37,9 +40,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
         _passwordController.text.isEmpty ||
         _bioController.text.isEmpty ||
         _usernameController.text.isEmpty) {
-            setState(() {
-      _isLoading = false;
-    });
+      setState(() {
+        _isLoading = false;
+      });
 
       return;
     }
@@ -55,15 +58,37 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
         await userService.createUser(username, email, password, bio, _image!);
 
     if (res != 'success') {
-      showSnackBar(res, context);
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) {
+            return const LoginScreen();
+          },
+        ),
+      );
     } else {
-      showSnackBar("Sign up successfully!", context);
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) {
+          return const ReponsiveLayout(
+            webScreenlayout: WebScreenLayout(),
+            mobileScreenlayout: MobileScreenLayout(),
+          );
+        },
+      ));
     }
 
     setState(() {
       _isLoading = false;
     });
+  }
 
+  void _toLogin() {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (context) {
+          return const LoginScreen();
+        },
+      ),
+    );
   }
 
   @override
@@ -186,7 +211,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                     child: const Text("Already have an account?"),
                   ),
                   GestureDetector(
-                    onTap: () {},
+                    onTap: _toLogin,
                     child: const Text(
                       'Log in',
                       style: TextStyle(fontWeight: FontWeight.bold),

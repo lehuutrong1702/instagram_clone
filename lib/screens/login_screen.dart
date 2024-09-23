@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:instagram_clone/reponsive/mobile_screen_layout.dart';
+import 'package:instagram_clone/reponsive/reponsive_layout_screen.dart';
+import 'package:instagram_clone/reponsive/web_screen_layout.dart';
+import 'package:instagram_clone/screens/signup_screen.dart';
 import 'package:instagram_clone/services/user_service.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/utils/utils.dart';
@@ -22,20 +26,39 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   bool _isLoading = false;
 
   void _login() async {
-      setState(() {
-        _isLoading = true;
-      });
-      final service = ref.watch(userServiceProvider);
-      String res = await service.signIn(_emailController.text, _passwordController.text) ;
-      if(res =='success') {
-    showSnackBar(res, context);
-      } else {
-        showSnackBar(res, context);
-      }
+    setState(() {
+      _isLoading = true;
+    });
+    final service = ref.watch(userServiceProvider);
+    String res =
+        await service.signIn(_emailController.text, _passwordController.text);
+    if (res == 'success') {
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) {
+          return const ReponsiveLayout(
+            webScreenlayout: WebScreenLayout(),
+            mobileScreenlayout: MobileScreenLayout(),
+          );
+        },
+      ));
+    } else {
+      showSnackBar(res, context);
+    }
 
-      setState(() {
-        _isLoading = false;
-      });
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  void _toSignUp() {
+   
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) {
+          return const SignupScreen();
+        },
+      ),
+    );
   }
 
   @override
@@ -85,19 +108,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               InkWell(
                 // splashColor: Colors.red,
                 onTap: _login,
-                child: _isLoading ? const CircularProgressIndicator() :Container(
-                  width: double.infinity,
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  decoration: const ShapeDecoration(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(4),
-                        ),
+                child: _isLoading
+                    ? const CircularProgressIndicator()
+                    : Container(
+                        width: double.infinity,
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        decoration: const ShapeDecoration(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(4),
+                              ),
+                            ),
+                            color: blueColor),
+                        child: const Text('Log in'),
                       ),
-                      color: blueColor),
-                  child: const Text('Log in'),
-                ),
               ),
               const SizedBox(height: 12),
               Flexible(
@@ -112,7 +137,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     child: const Text("Don't have an account?"),
                   ),
                   GestureDetector(
-                    onTap: (){},
+                    onTap: _toSignUp,
                     child: const Text(
                       'Sign up',
                       style: TextStyle(fontWeight: FontWeight.bold),
@@ -120,11 +145,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   )
                 ],
               )
-
-              //input email
-              //input password
-              //button
-              //transistion to sign up
             ],
           ),
         ),
