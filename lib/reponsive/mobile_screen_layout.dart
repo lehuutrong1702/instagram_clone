@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:instagram_clone/services/user_service.dart';
 import 'package:instagram_clone/utils/colors.dart';
+import 'package:instagram_clone/utils/global_var.dart';
 
 class MobileScreenLayout extends ConsumerStatefulWidget {
   const MobileScreenLayout({super.key});
@@ -43,13 +44,7 @@ class _MobileScreenLayoutState extends ConsumerState<MobileScreenLayout> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: PageView(
-        children: [
-          Text('home'),
-          Text('search'),
-          Text('add'),
-          Text('favorite'),
-          Text('profile'),
-        ],
+        children: homeScreenItem,
         physics: const NeverScrollableScrollPhysics(),
         controller: pageController,
          onPageChanged: _onPageChanged ,

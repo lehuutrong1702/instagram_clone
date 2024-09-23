@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:instagram_clone/utils/dimensions.dart';
+import 'package:instagram_clone/utils/global_var.dart';
 
 class ReponsiveLayout extends ConsumerWidget {
   final Widget webScreenlayout;
