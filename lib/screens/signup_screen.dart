@@ -145,7 +145,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                     left: 80,
                     child: IconButton(
                       onPressed: () async {
-                        File img = await pickImage(ImageSource.camera);
+                        File img = await pickImage<File>(ImageSource.camera);
                         setState(() {
                           _image = img;
                         });
