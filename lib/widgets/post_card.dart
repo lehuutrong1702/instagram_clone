@@ -1,16 +1,32 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:instagram_clone/models/post.dart';
 import 'package:instagram_clone/utils/colors.dart';
+import 'package:instagram_clone/widgets/like_animation.dart';
 import 'package:intl/intl.dart';
 
-class PostCard extends StatelessWidget {
+class PostCard extends ConsumerStatefulWidget {
+  const PostCard({super.key, required this.post});
   final Post post;
 
-  const PostCard({super.key, required this.post});
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() {
+    return _PostCardState();
+  }
+}
+
+class _PostCardState extends ConsumerState<PostCard> {
+  bool isLikeAnimating = false;
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+    final post = widget.post;
+
     return Container(
       color: mobileBackgroundColor,
       padding: const EdgeInsets.symmetric(vertical: 10),
@@ -80,20 +96,57 @@ class PostCard extends StatelessWidget {
             ),
           ),
           // image section
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.35,
-            width: double.infinity,
-            child: Image.network(
-              post.imageUrl,
-              fit: BoxFit.cover,
+          GestureDetector(
+            onDoubleTap: () {
+              setState(() {
+                isLikeAnimating = true;
+              });
+            },
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.35,
+                  width: double.infinity,
+                  child: Image.network(
+                    post.imageUrl,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                AnimatedOpacity(
+                  opacity: isLikeAnimating ? 1 : 0,
+                  duration: const Duration(milliseconds: 200),
+                  child: LikeAnimation(
+                    isAnimating: isLikeAnimating,
+                    duration: const Duration(milliseconds: 120),
+                    onEnd: () {
+                      setState(() {
+                        isLikeAnimating = false;
+                      });
+                    },
+                    child: const Icon(
+                      Icons.favorite,
+                      color: Colors.white,
+                      size: 100,
+                    ),
+                  ),
+                )
+              ],
             ),
           ),
           // like commnent section
           Row(
             children: [
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.favorite, color: Colors.red),
+              LikeAnimation(
+                isAnimating: post.likes.contains(user!.uid),
+                smallLike: true,
+                child: IconButton(
+                  onPressed: () {},
+                  icon: Icon(Icons.favorite,
+                      color: post.likes.contains(user.uid)
+                          ? Colors.red
+                          : Colors.white),
+                ),
               ),
               IconButton(
                 onPressed: () {},
