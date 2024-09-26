@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:instagram_clone/models/post.dart';
 import 'package:instagram_clone/repositories/implementations/storage_repository.dart';
@@ -9,6 +10,14 @@ final postServiceProvider = Provider((ref) {
   final storageRepository = ref.watch(firebaseStorageRepositoryProvider);
   return PostService(storageRepository: storageRepository);
 });
+
+
+final postProvider = StreamProvider((ref) {
+  final snapshot =  FirebaseFirestore.instance.collection('post').snapshots();
+
+  return snapshot;
+}) ;
+
 
 class PostService {
   final FirebaseStorageRepository storageRepository;

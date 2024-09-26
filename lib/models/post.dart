@@ -1,3 +1,6 @@
+import 'package:intl/intl.dart';
+
+
 class Post {
   Post(
       {required this.description,
@@ -29,5 +32,17 @@ class Post {
       'profImage': profImage,
       'likes': likes
     };
+  }
+
+  static Post fromJson(Map<String,dynamic> data) {
+    return Post(
+        description: data['description'],
+        imageUrl: data['imageUrl'],
+        uid: data['uid'],
+        postId: data['postId'],
+        username: data['username'],
+        datePublished: data['datePublished'].toDate(),
+        profImage: data['profImage'],
+        likes: data['likes']);
   }
 }
