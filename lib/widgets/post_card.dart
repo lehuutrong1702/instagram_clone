@@ -5,6 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:instagram_clone/models/post.dart';
+import 'package:instagram_clone/services/post_service.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/widgets/like_animation.dart';
 import 'package:intl/intl.dart';
@@ -26,6 +27,7 @@ class _PostCardState extends ConsumerState<PostCard> {
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
     final post = widget.post;
+    final postService = ref.watch(postServiceProvider);
 
     return Container(
       color: mobileBackgroundColor,
@@ -101,6 +103,10 @@ class _PostCardState extends ConsumerState<PostCard> {
               setState(() {
                 isLikeAnimating = true;
               });
+              if (!post.likes.contains(user!.uid))
+              {
+                postService.toggleLikePost(post, user!.uid);
+              }
             },
             child: Stack(
               alignment: Alignment.center,
@@ -141,7 +147,9 @@ class _PostCardState extends ConsumerState<PostCard> {
                 isAnimating: post.likes.contains(user!.uid),
                 smallLike: true,
                 child: IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    postService.toggleLikePost(post, user!.uid);
+                  },
                   icon: Icon(Icons.favorite,
                       color: post.likes.contains(user.uid)
                           ? Colors.red

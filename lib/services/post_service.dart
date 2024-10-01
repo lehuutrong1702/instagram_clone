@@ -8,27 +8,25 @@ import 'package:uuid/uuid.dart';
 
 final postServiceProvider = Provider((ref) {
   final storageRepository = ref.watch(firebaseStorageRepositoryProvider);
-  return PostService(storageRepository: storageRepository);
+  return PostService(ref: ref, storageRepository: storageRepository);
 });
 
-
 final postProvider = StreamProvider((ref) {
-  final snapshot =  FirebaseFirestore.instance.collection('post').snapshots();
+  final snapshot = FirebaseFirestore.instance.collection('post').snapshots();
 
   return snapshot;
-}) ;
-
+});
 
 class PostService {
   final FirebaseStorageRepository storageRepository;
-
-  PostService({required this.storageRepository});
+  final ProviderRef ref;
+  PostService({required this.storageRepository, required this.ref});
 
   Future<String> createPost(String uid, String description, Uint8List image,
       String username, String profImage) async {
     try {
-      var id =  const Uuid().v1();
-      String imageUrl = await storageRepository.savePostImage(image,id);
+      var id = const Uuid().v1();
+      String imageUrl = await storageRepository.savePostImage(image, id);
 
       final newPost = Post(
           description: description,
@@ -46,4 +44,14 @@ class PostService {
       return err.toString();
     }
   }
+
+  void toggleLikePost(Post post, String uid) {
+    if (post.likes.contains(uid)) {
+      storageRepository.unlikePost(post.postId, uid);
+    } else {
+         storageRepository.likePost(post.postId, uid);
+    }
+    // ref.refresh(postProvider);
+  }
+
 }

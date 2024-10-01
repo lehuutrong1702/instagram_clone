@@ -44,4 +44,16 @@ class FirebaseStorageRepository {
     final imageUrl = await storageRef.getDownloadURL();
     return imageUrl;
   }
+
+  Future<void> unlikePost(String postId, String uid) async {
+      FirebaseFirestore.instance.collection('post').doc(postId).update({
+        'likes': FieldValue.arrayRemove([uid]),
+      });
+  }
+  Future<void> likePost(String postId, String uid) async {
+      FirebaseFirestore.instance.collection('post').doc(postId).update({
+        'likes': FieldValue.arrayUnion([uid]),
+      });
+  }
+
 }
