@@ -5,6 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:instagram_clone/models/post.dart';
+import 'package:instagram_clone/screens/comment_screen.dart';
 import 'package:instagram_clone/services/post_service.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/widgets/like_animation.dart';
@@ -103,8 +104,7 @@ class _PostCardState extends ConsumerState<PostCard> {
               setState(() {
                 isLikeAnimating = true;
               });
-              if (!post.likes.contains(user!.uid))
-              {
+              if (!post.likes.contains(user!.uid)) {
                 postService.toggleLikePost(post, user!.uid);
               }
             },
@@ -157,7 +157,13 @@ class _PostCardState extends ConsumerState<PostCard> {
                 ),
               ),
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) =>  CommentScreen(post),
+                    ),
+                  );
+                },
                 icon: const Icon(Icons.comment_outlined),
               ),
               IconButton(

@@ -7,6 +7,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:instagram_clone/models/post.dart';
 import 'package:instagram_clone/models/user.dart';
 
+import '../../models/comment.dart';
+
 final firebaseStorageRepositoryProvider =
     Provider((ref) => FirebaseStorageRepository());
 
@@ -36,8 +38,9 @@ class FirebaseStorageRepository {
   }
 
   Future<String> savePostImage(Uint8List image, String postId) async {
-     final storageRef =
-        FirebaseStorage.instance.ref().child('postImage').child('$postId.jpg');;
+    final storageRef =
+        FirebaseStorage.instance.ref().child('postImage').child('$postId.jpg');
+    ;
 
     await storageRef.putData(image);
 
@@ -46,14 +49,31 @@ class FirebaseStorageRepository {
   }
 
   Future<void> unlikePost(String postId, String uid) async {
-      FirebaseFirestore.instance.collection('post').doc(postId).update({
-        'likes': FieldValue.arrayRemove([uid]),
-      });
-  }
-  Future<void> likePost(String postId, String uid) async {
-      FirebaseFirestore.instance.collection('post').doc(postId).update({
-        'likes': FieldValue.arrayUnion([uid]),
-      });
+    FirebaseFirestore.instance.collection('post').doc(postId).update({
+      'likes': FieldValue.arrayRemove([uid]),
+    });
   }
 
+  Future<void> likePost(String postId, String uid) async {
+    FirebaseFirestore.instance.collection('post').doc(postId).update({
+      'likes': FieldValue.arrayUnion([uid]),
+    });
+  }
+
+  Future<void> saveComment(Comment comment) async {
+    FirebaseFirestore.instance
+        .collection('post')
+        .doc(comment.postId)
+        .collection('comments')
+        .doc(comment.id)
+        .set(comment.toJson());
+  }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> getComment(String postId) {
+    return FirebaseFirestore.instance
+        .collection('post')
+        .doc(postId)
+        .collection('comments')
+        .snapshots();
+  }
 }
