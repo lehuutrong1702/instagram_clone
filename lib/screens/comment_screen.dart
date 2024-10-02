@@ -73,8 +73,7 @@ class _CommentScreenState extends ConsumerState<CommentScreen> {
             children: [
               CircleAvatar(
                 backgroundImage: NetworkImage(
-                  'https://images.unsplash.com/photo-1726808260756-ec1d4eceaf71?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                ),
+                    ref.watch(currentUserProvider).value!.imageUrl),
                 radius: 16,
               ),
               ref.watch(currentUserProvider).when(
