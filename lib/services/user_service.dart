@@ -13,6 +13,11 @@ final currentUserProvider = FutureProvider<InstagramUser>((ref) {
   return firebaseUserRepository.getUser();
 });
 
+final userByUsernameProvider =
+    FutureProvider.family<List<InstagramUser>, String>((ref, username) {
+  return ref.watch(firebaseUserRepositoryProvider).selectByUsername(username);
+});
+
 final userServiceProvider = Provider((ref) {
   final authRepository = ref.watch(firebaseAuthRepositoryProvider);
 

@@ -83,7 +83,7 @@ class _CommentScreenState extends ConsumerState<CommentScreen> {
                           padding: const EdgeInsets.only(left: 16, right: 8),
                           child: TextField(
                             controller: controller,
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                                 hintText: 'Comment as a usename',
                                 border: InputBorder.none),
                           ),

@@ -27,4 +27,25 @@ class FirebaseUserRepository implements UserRepository {
 
     return InstagramUser.fromJson(snap.data() as Map<String, dynamic>);
   }
+
+  Future<List<InstagramUser>> selectByUsername(String username) async { 
+      if (_auth.currentUser == null) {
+      print("current user is null");
+      return Future.error('no user found');
+    }
+
+    User currentUser = _auth.currentUser!;
+    QuerySnapshot snap =
+        await _firestore.collection('user').where('username',isGreaterThanOrEqualTo: username).get();
+    
+    var result = <InstagramUser>[];
+
+    for (QueryDocumentSnapshot data in snap.docs) {
+        result.add(InstagramUser.fromJson(data.data() as Map<String, dynamic>)) ;
+    }
+
+    return result;
+
+   
+  }
 }
